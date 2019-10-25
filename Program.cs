@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 using AO3scrape;
@@ -30,28 +31,84 @@ namespace AO3scrape
 		}
 		
 		
+		
+		public static bool queryArg(String arg, string[] args, out String result) {
+			arg = arg.Trim();
+			
+			for(int i = 0; i < args.Length; i++) {
+				args[i] = args[i].TrimStart('-');
+				
+				if(args[i] == arg) {
+					if (i+1 < args.Length && args[i + 1].Trim().StartsWith("-") == false) {
+						result = args[i + 1];
+					} else {
+						result = null;
+					}
+					return true;
+				}
+			}
+			
+			result = null;
+			return false;
+		}
+		
+		public static bool queryArg(String arg, string[] args) {
+			String temp;
+			return queryArg(arg, args, out temp);
+		}
+		
+		
 		public static void Main(string[] args)
 		{
+			String tag;
+			String a_tag;
+			if(queryArg("tag", args, out a_tag) == true && String.IsNullOrEmpty(a_tag) == false) {
+				tag = a_tag.Trim();
+			} else {
+				Console.Write("Enter tag: ");
+				tag = Console.ReadLine();
+			}
 			
 			
-			Console.Write("Enter tag: ");
-			String tag = Console.ReadLine();
+			int min = 0;
+			String a_min;
+			
+			if(queryArg("min", args, out a_min) == true && a_min != null) {
+				if(Int32.TryParse(a_min, out min) == true) {
+					goto nomin;
+				}
+			}
 			
 		min:
+			// will be skipped via goto if a minimum word count can
+			// successfully be parsed from the console arguments
 			Console.Write("Enter min words: ");
-			int min = 0;
 			String min_t = Console.ReadLine();			// temporary value
 			if(Int32.TryParse(min_t, out min) == false) {
-				if(min_t.Trim() == "exit") {					// if the NaN value entered is "exit", shut down
+				if(min_t.Trim() == "exit") {			// if the NaN value entered is "exit", shut down
 					return;
 				}
 				Console.WriteLine("ERROR: invalid number! Please try again.");
 				goto min;
 			}
 			
-		max:
-			Console.Write("Enter max words: ");
+		nomin:
+			
+			
+			
 			int max = 0;
+			String a_max;
+			if(queryArg("max", args, out a_max) == true && a_max != null) {
+				if(Int32.TryParse(a_max, out max) == true) {
+					goto nomax;
+				}
+			}
+		
+		max:
+			// will be skipped via goto if a maximum word count can
+			// successfully be parsed from the console arguments
+			Console.Write("Enter max words: ");
+			
 			String max_t = Console.ReadLine();			// temporary value
 			if(Int32.TryParse(max_t, out max) == false) {
 				if(max_t.Trim() == "exit") {					// if the NaN value entered is "exit", shut down
@@ -60,6 +117,9 @@ namespace AO3scrape
 				Console.WriteLine("ERROR: invalid number! Please try again.");
 				goto max;
 			}
+		
+		nomax:
+			
 			if(max > 500000) {
 				max = 500000;
 			}
@@ -77,8 +137,10 @@ namespace AO3scrape
 			
 
 			
-			
-			Console.WriteLine("There are " + getWorkNumbers(tag, min, max) + " works tagged '" + tag + "' between " + min + " and " + max + " words.");
+			int works = getWorkNumbers(tag, min, max);
+			Console.WriteLine("There are {0} works tagged '{1}' between {2} and {3} words.", works, tag, min, max);
+//			String output = Exporter.addColumn(min.ToString(), works.ToString());
+//			Exporter.writeFile(Exporter.exeDirectory() + @"\output.txt", output);
 			Console.WriteLine("Press enter to terminate...");
 			Console.ReadLine();
 		}

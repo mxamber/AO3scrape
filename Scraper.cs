@@ -24,7 +24,8 @@ namespace AO3scrape
 				response.Close();
 				return code;
 			} catch(WebException exception) {
-				Console.WriteLine("ERROR! Tag does not exist!");
+				Console.WriteLine("ERROR! The resource could not be request. Tag might be nonexistent.");
+				Console.WriteLine(exception.ToString());
 				return null;
 			}
 		}
