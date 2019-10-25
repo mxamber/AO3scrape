@@ -24,7 +24,8 @@ namespace AO3scrape
 				response.Close();
 				return code;
 			} catch(WebException exception) {
-				Console.WriteLine("ERROR! The resource could not be request. Tag might be nonexistent.");
+				Console.WriteLine("ERROR! The resource could not be requested.");
+				Console.WriteLine("The tag might be nonexistent or not marked 'common' yet. Tags that aren't marked 'common' can't be filtered on.");
 				Console.WriteLine(exception.ToString());
 				return null;
 			}
