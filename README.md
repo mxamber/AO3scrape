@@ -1,2 +1,3 @@
 # AO3scrape
-scraping fandom numbers from AO3
+
+Tool for scraping and exporting fandom numbers from AO3.
