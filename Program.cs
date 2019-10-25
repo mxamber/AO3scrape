@@ -96,7 +96,7 @@ namespace AO3scrape
 		public static void Main(string[] args)
 		{	
 			if(queryArg("help", args) || queryArg("h", args)) {
-				Console.WriteLine("\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-simple\t\tonly output result number\n");
+				Console.WriteLine("\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n");
 				Console.WriteLine("Press enter to terminate...");
 				Console.ReadLine();
 				return;
