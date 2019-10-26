@@ -4,7 +4,7 @@ Command-line tool for scraping and exporting fandom numbers from AO3.
 
 ## Usage
 
-Run via the console. Open *cmd.exe*, navigate to the folder you saved *AO3scrape.exe* in, and run the file with any desired flags. Example: `C:\Users\example\Desktop>AO3scrape.exe -tag "Harry Potter - J. K. Rowling" -min 5000 -max 25000 -search "&work_search[query]=- Dramione"`
+Run via the console. Open *cmd.exe*, navigate to the folder you saved *AO3scrape.exe* in, and run the file with any desired flags. Example: `C:\Users\example\Desktop>AO3scrape.exe -tag "Harry Potter - J. K. Rowling" -min 5000 -max 25000 -search "&work_search[query]=-Dramione"`
 
 **-h, -help:**
 Displays the help text, overruling any other flags.
