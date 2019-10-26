@@ -1,4 +1,4 @@
-*.csproj
+*.csproj*
 bin/*
 obj/*
 *.config
