@@ -13,19 +13,30 @@ namespace AO3scrape
 			// empty			
 		}
 		
+		
+		public static String sanitiseChars(String input) {
+			input = input.Replace("&", "*a*");
+			return input;
+		}
+		
+		
 		public static String worksUrl(String tag_name, String custom = "") {
+			tag_name = sanitiseChars(tag_name);
 			return strbase + str3 + tag_name + custom;
 		}
 		
 		public static String worksUrlMin(int min_words, String tag_name, String custom = "") {
+			tag_name = sanitiseChars(tag_name);
 			return strbase + str1 + min_words + str3 + tag_name + custom;
 		}
 		
 		public static String worksUrlMax(int max_words, String tag_name, String custom = "") {
+			tag_name = sanitiseChars(tag_name);
 			return strbase + str2 + max_words + str3 + tag_name + custom;
 		}
 		
 		public static String worksUrlMinMax(int min_words, int max_words, String tag_name, String custom = "") {
+			tag_name = sanitiseChars(tag_name);
 			return strbase + str1 + min_words + str2 + max_words + str3 + tag_name + custom;
 		}
 	}

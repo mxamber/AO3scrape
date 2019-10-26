@@ -26,6 +26,8 @@ namespace AO3scrape
 				url = UrlGenerator.worksUrl(tag, custom);
 			}
 			
+			Console.WriteLine(url);
+			
 //			url = UrlGenerator.worksUrl(min, max, tag, custom);	// generate search results URL
 			String raw = Scraper.scrape(url);							// scrape search results page 
 			
@@ -95,9 +97,12 @@ namespace AO3scrape
 		
 		public static void Main(string[] args)
 		{	
+			const String msg_end = "Press enter to terminate...";
+			const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n";
+			
 			if(queryArg("help", args) || queryArg("h", args)) {
-				Console.WriteLine("\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n");
-				Console.WriteLine("Press enter to terminate...");
+				Console.WriteLine(msg_help);
+				Console.WriteLine(msg_end);
 				Console.ReadLine();
 				return;
 			}
@@ -122,6 +127,9 @@ namespace AO3scrape
 				tag = a_tag.Trim();
 			} else {
 				Console.WriteLine("ERROR: please provide a tag!");
+				Console.WriteLine(msg_help);
+				Console.WriteLine(msg_end);
+				Console.ReadLine();
 				return;
 			}
 			
@@ -162,7 +170,7 @@ namespace AO3scrape
 				Console.WriteLine("{0}\t\t{1}\t\t{2}", min, max, works);
 			} else {
 				Console.WriteLine("There are {0} works tagged '{1}' between {2} and {3} words that fit your query.", works, tag, min, max);
-				Console.WriteLine("Press enter to terminate...");
+				Console.WriteLine(msg_end);
 				Console.ReadLine();
 			}
 		}
