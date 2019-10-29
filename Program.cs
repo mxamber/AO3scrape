@@ -72,8 +72,12 @@ namespace AO3scrape
 				int id;
 				queryArg("work", args, out id_str);
 				if(String.IsNullOrEmpty(id_str) == false && Int32.TryParse(id_str, out id)) {
-					Work result = WorkQuery.beginQuery(id);
-					Console.WriteLine("Work: {0} by {1}\nPublished\t{2}\nUpdated\t\t{3}\nWords\t\t{4}\nChapters\t{5}\nKudos\t\t{6}\nComments\t{7}\nBookmarks\t{8}\nHits\t\t{9}", result.title, result.author, result.published.ToLongDateString(), result.updated.ToLongDateString(), result.words, result.chapters, result.kudos, result.comments, result.bookmarks, result.hits);
+					try {
+						Work result = WorkQuery.beginQuery(id);
+						Console.WriteLine("Work: {0} by {1}\nPublished\t{2}\nUpdated\t\t{3}\nWords\t\t{4}\nChapters\t{5}\nKudos\t\t{6}\nComments\t{7}\nBookmarks\t{8}\nHits\t\t{9}", result.title, result.author, result.published.ToLongDateString(), result.updated.ToLongDateString(), result.words, result.chapters, result.kudos, result.comments, result.bookmarks, result.hits);
+					} catch (System.ArgumentException) {
+						Console.WriteLine("Work could not be found! Please enter a valid work ID.");
+					}
 					
 					return;
 				}

@@ -24,7 +24,7 @@ namespace AO3scrape
 				response.Close();
 				return code;
 			} catch(WebException exception) {
-				Console.WriteLine(exception.ToString());
+//				Console.WriteLine(exception.ToString());
 				return null;
 			}
 		}
