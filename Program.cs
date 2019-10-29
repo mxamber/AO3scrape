@@ -1,51 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using AO3scrape;
 
 namespace AO3scrape
 {
 	class Program
-	{
-		public static int getWorkNumbers(String tag, int min, int max, String custom = "") {
-			Regex work_regex = new Regex(@"([\d]+)\sWorks(\sfound|)\sin");
-			Regex error_regex = new Regex("div[^\\>]*class=\"[\\w\\s]*errors");
-			
-			int works = 0;												// number of works: default 0 until a number can be found
-			
-			String url = "";
-			
-			if (min <0 && max > -1) {
-				url = UrlGenerator.worksUrlMax(max, tag, custom);
-			} else if (max < 0 && min > -1) {
-				url = UrlGenerator.worksUrlMin(min, tag, custom);
-			} else if (max > -1 && min > -1) {
-				url = UrlGenerator.worksUrlMinMax(min, max, tag, custom);
-			} else {
-				url = UrlGenerator.worksUrl(tag, custom);
-			}
-			
-			Console.WriteLine(url);
-			
-//			url = UrlGenerator.worksUrl(min, max, tag, custom);	// generate search results URL
-			String raw = Scraper.scrape(url);							// scrape search results page 
-			
-			if(String.IsNullOrEmpty(raw) != true) {
-				Int32.TryParse(work_regex.Match(raw).Groups[1].ToString().Trim(), out works);
-				// if the response is not empty, regex for number and attempt to parse as int
-				// if successful: parsed number will be stored in var works, replacing default 0
-				// if unsuccessful, default 0 will remain				
-			}
-			
-			// either way, return number of works
-			// successful scraping will return number
-			// unsuccessful scraping will return 0
-			return works;
-		}
-		
-		
-		
+	{		
 		public static bool queryArg(String arg, string[] args, out String result) {
 			arg = arg.Trim();
 			
@@ -96,7 +57,7 @@ namespace AO3scrape
 		
 		
 		public static void Main(string[] args)
-		{	
+		{
 			const String msg_end = "Press enter to terminate...";
 			const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n";
 			
@@ -159,7 +120,14 @@ namespace AO3scrape
 			}
 			
 			
-			int works = getWorkNumbers(tag, min, max, custom_search);
+//			int works = getWorkNumbers(tag, min, max, custom_search);
+			
+			FandomQuery query = new FandomQuery(tag);
+			query.minimum = min;
+			query.maximum = max;
+			query.custom = custom_search;
+			query.beginQuery();
+			int works = query.results;
 			
 			if(min < 0)
 				min = 0;
