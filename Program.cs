@@ -59,13 +59,24 @@ namespace AO3scrape
 		public static void Main(string[] args)
 		{
 			const String msg_end = "Press enter to terminate...";
-			const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n";
+			const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-work\t\trequests a certain work's stats by its ID\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n";
 			
 			if(queryArg("help", args) || queryArg("h", args)) {
 				Console.WriteLine(msg_help);
 				Console.WriteLine(msg_end);
-				Console.ReadLine();
 				return;
+			}
+			
+			if(queryArg("work", args)) {
+				String id_str;
+				int id;
+				queryArg("work", args, out id_str);
+				if(String.IsNullOrEmpty(id_str) == false && Int32.TryParse(id_str, out id)) {
+					Work result = WorkQuery.beginQuery(id);
+					Console.WriteLine("Work: {0} by {1}\nPublished\t{2}\nUpdated\t\t{3}\nWords\t\t{4}\nChapters\t{5}\nKudos\t\t{6}\nComments\t{7}\nBookmarks\t{8}\nHits\t\t{9}", result.title, result.author, result.published.ToLongDateString(), result.updated.ToLongDateString(), result.words, result.chapters, result.kudos, result.comments, result.bookmarks, result.hits);
+					
+					return;
+				}
 			}
 			
 			

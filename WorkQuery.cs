@@ -74,6 +74,27 @@ namespace AO3scrape
 			Match hits_match = regexNumericField("hits").Match(raw);
 			Int32.TryParse(matchProperty(hits_match, "hits"), out hits);
 			
+			Match publish_match = publish_regex.Match(raw);
+			DateTime published = new DateTime();
+			if(publish_match.Groups["publish"].Success == true && DateTime.TryParse(publish_match.Groups["publish"].ToString(), out published) == false) {
+				// checking first if the capture group exists. if not, condition will fail anyway.
+				// then running int32 try parse, if successful, value will be stored regardless of if condition (out published)
+				// if group exists but int try parse fails, published will be assigned january 1st, 1970 instead: a common failsafe value
+				published = new DateTime(1970, 1, 1);
+			}
+			result.published = published;
+			
+			
+			Match update_match = update_regex.Match(raw);
+			DateTime updated = new DateTime();
+			if(update_match.Groups["update"].Success == false || chapters == 1) {
+				updated = published;
+			} else if(update_match.Groups["update"].Success == true && DateTime.TryParse(update_match.Groups["update"].ToString(), out updated) == false) {
+				// same procedure as above, except if no update date can be detected or there is only 1 chapter
+				// the publish date will be used, since oneshots and fics with only 1 chapter yet don't have an update date
+				published = new DateTime(1970, 1, 1);
+			}
+			result.updated = updated;
 			
 			result.title = title;
 			result.author = author;

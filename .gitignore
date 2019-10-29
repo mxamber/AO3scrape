@@ -4,3 +4,4 @@ obj/*
 *.config
 *.json
 icon/*
+screenshots/*

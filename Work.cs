@@ -7,11 +7,11 @@ namespace AO3scrape
 	{
 		public String title;
 		public String author;
-		public String[] fandoms;
-		public String[] ships;
-		public String[] characters;
-		public String[] freeform;
-		public String language;
+		String[] fandoms;
+		String[] ships;
+		String[] characters;
+		String[] freeform;
+		String language;
 		public DateTime published;
 		public DateTime updated;
 		public int words;
