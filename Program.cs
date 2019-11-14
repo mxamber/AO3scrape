@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using ScrapingFromOurOwn;
 
 namespace AO3scrape
 {
 	class Program
-	{		
-		public static bool queryArg(String arg, string[] args, out String result) {
+	{
+		const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-work\t\trequests a certain work's stats by its ID\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n-ranges\t\tOverrides min and max flags. Specify a range of word counts.\n-export\t\tSpecify a file to hold the output.";
+		
+		static bool queryArg(String arg, string[] args, out String result) {
 			arg = arg.Trim();
 			
 			for(int i = 0; i < args.Length; i++) {
@@ -27,45 +28,96 @@ namespace AO3scrape
 			return false;
 		}
 		
-		public static bool queryArg(String arg, string[] args) {
+		static bool queryArg(String arg, string[] args) {
 			String temp;
 			return queryArg(arg, args, out temp);
 		}
 		
 		
-		public static int[] getRangesNumeric(String range_str) {
-			String[] ranges_str = range_str.Split(',');
-			List<int> ranges_l = new List<int>();
+		static String getTag(String[] args) {
+			String tag = "";
+			String a_tag;
+			if(queryArg("tag", args, out a_tag) == true && String.IsNullOrEmpty(a_tag) == false) {
+				tag = a_tag.Trim();
+			}
 			
-			for(int i = 0; i < ranges_str.Length; i++) {
-				int x;
-				if(Int32.TryParse(ranges_str[i], out x)) { ranges_l.Add(x); }
-			}			
-			int[] ranges = ranges_l.ToArray();
+			if(String.IsNullOrEmpty(tag)) {
+				Console.WriteLine("ERROR: please provide a tag!");
+				Console.WriteLine(msg_help);
+				Environment.Exit(0);
+			}
+			return tag;
+		}
+		
+		
+		static void pollRanges(int[] ranges, String[] args, String filename = "") {
+			if(ranges.Length < 2) {
+				Console.WriteLine("ERROR: Please provide at least 2 values!");
+				Console.WriteLine(msg_help);
+				Environment.Exit(0);
+			}
+			
+			bool export = false;
+			if(String.IsNullOrEmpty(filename) == false) {
+				export = true;
+			}
+			
+			String tag = getTag(args);
+			
+			String custom_search = "";
+			queryArg("search", args, out custom_search);
+			
+			
+			String output = "";
+			FandomQuery query = new FandomQuery(tag);
+			query.custom = custom_search;
+			
+			
+			for(int i = 0; i < (ranges.Length - 1); i++) {
+				query.minimum = ranges[i];
+				query.maximum = ranges[i+1];
+				query.beginQuery();
+				output = Exporter.addColumn(output, query.minimum.ToString(), query.maximum.ToString(), query.results.ToString());
+			}
+			
+			
+			if(export == true) {
+				Exporter.writeFile(filename, output);
+			} else {
+				Console.WriteLine(output);
+			}
+			
+			Environment.Exit(0);
+		}
+		
+		static int[] getRanges(String raw) {
+			String[] ranges_raw = raw.Split(',');
+			int[] ranges = {};
+			
+			for(int i = 0; i < ranges_raw.Length; i++) {
+				int current;
+				if(Int32.TryParse(ranges_raw[i], out current)) {
+					int[] ranges_temp = new int[ranges.Length + 1];
+					ranges.CopyTo(ranges_temp,0);
+					ranges_temp[ranges_temp.Length - 1] = current;
+					ranges = ranges_temp;
+				}
+			}
+			
 			return ranges;
 		}
 		
-		public static void pollRanges(int[] ranges) {
-			//			Console.WriteLine("{0} - {1}", 0, ranges[0]);
-//			
-//			for(int i = 1; i < ranges.Length - 1; i++) {
-//				Console.WriteLine("{0} - {1}", ranges[i], ranges[i+1]);
-//			}
-//			
-//			Console.WriteLine("{0} to unlimited", ranges[ranges.Length-1]);
-		}
 		
-		
-		public static void Main(string[] args)
+		static void Main(string[] args)
 		{
-			const String msg_end = "Press enter to terminate...";
-			const String msg_help = "\n---AO3scrape help---\n\n-h, -help\tdisplay this help text\n-work\t\trequests a certain work's stats by its ID\n-min\t\tset minimum word count\n-max\t\tset maximum word count\n-tag\t\tset tag to filter on\n-search\t\tadd your own search parameters\n-simple\t\tonly output result number\n";
 			
 			if(queryArg("help", args) || queryArg("h", args)) {
 				Console.WriteLine(msg_help);
-				Console.WriteLine(msg_end);
 				return;
 			}
+			
+			String filename = "";
+			queryArg("export", args, out filename);
 			
 			if(queryArg("work", args)) {
 				String id_str;
@@ -74,7 +126,12 @@ namespace AO3scrape
 				if(String.IsNullOrEmpty(id_str) == false && Int32.TryParse(id_str, out id)) {
 					try {
 						Work result = WorkQuery.beginQuery(id);
-						Console.WriteLine("Work: {0} by {1}\nPublished\t{2}\nUpdated\t\t{3}\nWords\t\t{4}\nChapters\t{5}\nKudos\t\t{6}\nComments\t{7}\nBookmarks\t{8}\nHits\t\t{9}", result.title, result.author, result.published.ToLongDateString(), result.updated.ToLongDateString(), result.words, result.chapters, result.kudos, result.comments, result.bookmarks, result.hits);
+						String output = "Work: " + result.title + " by " + result.author + "\nPublished\t" + result.published.ToLongDateString() + "\nUpdated\t\t" + result.updated.ToLongDateString() + "\nWords\t\t" + result.words + "\nChapters\t" + result.chapters + "\nKudos\t\t" + result.kudos + "\nComments\t" + result.comments + "\nBookmarks\t" + result.bookmarks + "\nHits\t\t" + result.hits;
+						if(String.IsNullOrEmpty(filename) == false) {
+							Exporter.writeFile(filename, output);
+						} else {
+							Console.WriteLine(output);
+						}
 					} catch (System.ArgumentException) {
 						Console.WriteLine("Work could not be found! Please enter a valid work ID.");
 					}
@@ -84,10 +141,12 @@ namespace AO3scrape
 			}
 			
 			
-			
 			String range_str;
 			if(queryArg("range", args, out range_str) == true && String.IsNullOrEmpty(range_str) == false) {
+				int[] ranges = getRanges(range_str);
 				
+				
+				pollRanges(ranges, args, filename);
 			}
 			
 			
@@ -97,17 +156,7 @@ namespace AO3scrape
 			queryArg("search", args, out custom_search);
 			
 			
-			String tag = "";
-			String a_tag;
-			if(queryArg("tag", args, out a_tag) == true && String.IsNullOrEmpty(a_tag) == false) {
-				tag = a_tag.Trim();
-			} else {
-				Console.WriteLine("ERROR: please provide a tag!");
-				Console.WriteLine(msg_help);
-				Console.WriteLine(msg_end);
-				Console.ReadLine();
-				return;
-			}
+			String tag = getTag(args);
 			
 			int min = -1;
 			String a_min;
@@ -151,10 +200,10 @@ namespace AO3scrape
 			
 			if(queryArg("simple", args) == true) {
 				Console.WriteLine("{0}\t\t{1}\t\t{2}", min, max, works);
+			} else if(String.IsNullOrEmpty(filename) == false) {
+				Exporter.writeFile(filename, Exporter.addColumn(tag, min.ToString(), max.ToString(), works.ToString()));
 			} else {
 				Console.WriteLine("There are {0} works tagged '{1}' between {2} and {3} words that fit your query.", works, tag, min, max);
-				Console.WriteLine(msg_end);
-				Console.ReadLine();
 			}
 		}
 	}
