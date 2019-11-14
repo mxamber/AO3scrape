@@ -26,3 +26,7 @@ Allows adding custom search parameters to the search results URL used internally
 
 **-simple**
 Replaces the usual "there are x works" output with a numbers-only version listing minimum and maximum word count and number of fics, separated by tabulators and fit for import into spreadsheet software.
+
+## Notes
+
+Following the removal of all reusable code in order to separate the scraping code and the use case specific code to be placed here, [mxamber/ScrapingFromOurOwn](https://github.com/mxamber/ScrapingFromOurOwn) is now a requirement.
