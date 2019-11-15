@@ -36,3 +36,13 @@ Export results to specified text file instead of printing to console. Will overw
 ## Notes
 
 Following the removal of all reusable code in order to separate the scraping code and the use case specific code to be placed here, [mxamber/ScrapingFromOurOwn](https://github.com/mxamber/ScrapingFromOurOwn) is now a requirement.
+
+## Installation
+
+### Compile it yourself
+
+Download the source code. Set up a C# console application project in your IDE of choice. Either download a compiled version of SFO2 or the current source code from the Github repo (recommended). If you download the DLL, add it to your project's assembly references. If you download the source, place it in a second project in your first porject's solution and add said second project to your AO3scrape project's references. Compile.
+
+### Download
+
+Download AO3scrape.exe and SFO2.dll from the releases page. You can also download a current SFO2 release from the Github repo, but I can't guarantee it'll be compatible with AO3scrape, since I might update SFO2 without updating AO3scrape. Place both files in the same directory and run AO3scrape (no installation required).
