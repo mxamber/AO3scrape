@@ -35,7 +35,7 @@ Export results to specified text file instead of printing to console. Will overw
 
 ## Notes
 
-Following the removal of all reusable code in order to separate the scraping code and the use case specific code to be placed here, [mxamber/ScrapingFromOurOwn](https://github.com/mxamber/ScrapingFromOurOwn) is now a requirement.
+Following the removal of all reusable code in order to separate the scraping code and the use case specific code to be placed here, [mxamber/ScrapingFromOurOwn](https://github.com/mxamber/ScrapingFromOurOwn) is now a requirement. DLL included with releases.
 
 ## Installation
 
