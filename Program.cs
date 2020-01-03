@@ -76,7 +76,7 @@ namespace AO3scrape
 			for(int i = 0; i < (ranges.Length - 1); i++) {
 				query.minimum = ranges[i];
 				query.maximum = ranges[i+1];
-				query.beginQuery();
+				query.BeginQuery();
 				output = Exporter.addColumn(output, query.minimum.ToString(), query.maximum.ToString(), query.results.ToString());
 			}
 			
@@ -125,8 +125,8 @@ namespace AO3scrape
 				queryArg("work", args, out id_str);
 				if(String.IsNullOrEmpty(id_str) == false && Int32.TryParse(id_str, out id)) {
 					try {
-						Work result = WorkQuery.beginQuery(id);
-						String output = "Work: " + result.title + " by " + result.author + "\nPublished\t" + result.published.ToLongDateString() + "\nUpdated\t\t" + result.updated.ToLongDateString() + "\nWords\t\t" + result.words + "\nChapters\t" + result.chapters + "\nKudos\t\t" + result.kudos + "\nComments\t" + result.comments + "\nBookmarks\t" + result.bookmarks + "\nHits\t\t" + result.hits;
+						Work result = WorkQuery.BeginQuery(id);
+						String output = "Work:\t\t" + result.title + " by " + result.author + "\nPublished\t" + result.published.ToLongDateString() + "\nUpdated\t\t" + result.updated.ToLongDateString() + "\nWords\t\t" + result.words + "\nChapters\t" + result.chapters + "\nKudos\t\t" + result.kudos + "\nComments\t" + result.comments + "\nBookmarks\t" + result.bookmarks + "\nHits\t\t" + result.hits + "\nLanguage:\t" + result.language.ToString().Replace("_", " ");
 						if(String.IsNullOrEmpty(filename) == false) {
 							Exporter.writeFile(filename, output);
 						} else {
@@ -144,7 +144,6 @@ namespace AO3scrape
 			String range_str;
 			if(queryArg("range", args, out range_str) == true && String.IsNullOrEmpty(range_str) == false) {
 				int[] ranges = getRanges(range_str);
-				
 				
 				pollRanges(ranges, args, filename);
 			}
@@ -183,14 +182,11 @@ namespace AO3scrape
 				min = temp;			// min gets new value from temp, the former max
 			}
 			
-			
-//			int works = getWorkNumbers(tag, min, max, custom_search);
-			
 			FandomQuery query = new FandomQuery(tag);
 			query.minimum = min;
 			query.maximum = max;
 			query.custom = custom_search;
-			query.beginQuery();
+			query.BeginQuery();
 			int works = query.results;
 			
 			if(min < 0)
