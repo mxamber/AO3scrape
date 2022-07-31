@@ -132,8 +132,9 @@ namespace AO3scrape
 						} else {
 							Console.WriteLine(output);
 						}
-					} catch (System.ArgumentException) {
+					} catch (System.ArgumentException e) {
 						Console.WriteLine("Work could not be found! Please enter a valid work ID.");
+						Console.WriteLine("Exception: {0}", e.ToString());
 					}
 					
 					return;
